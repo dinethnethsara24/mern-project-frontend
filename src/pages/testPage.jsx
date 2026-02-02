@@ -1,25 +1,38 @@
-import {useState} from 'react';
+import mediaUpload from '../utils/mediaUpload';
+import { useState } from 'react';
+
 
 
 export function TestPage() {
 
-    const [count, setCount] = useState(0);
-    const [status, setStatus] = useState("Passed");
+    const [image, setImage] = useState(null);
 
+
+        function fileUpload(){
+            mediaUpload(image).then(
+                (res)=>{
+                    console.log(res)
+                }
+            ).catch(
+                (res)=>{
+                    console.log(res)
+                }
+            )
+
+        
+            
+        }
     return(
 
       <div className='w-full h-screen flex justify-center items-center'>     
-        <div className='w-[300px] h-[200px] shadow flex justify-center items-center'>
-            <button onClick={() => setCount(count-1)} className='bg-blue-500 text-white font-bold px-4 py-2 rounded hover:bg-blue-600 cursor-pointer'>-</button>
-            <span className='mx-4 text-xl font-bold'>{count}</span>
-            <button onClick={() => setCount(count+1)} className='bg-blue-500 text-white font-bold px-4 py-2 rounded hover:bg-blue-600 cursor-pointer'>+</button>
-        </div>
+        <input 
+            onChange={(e) =>{
 
-        <div className='w-[300px] h-[200px] shadow flex flex-col'>
-            <span className='mx-4 text-xl font-bold flex justify-center'>{status}</span>
-            <button onClick={()=>setStatus("Passed")} className='bg-green-500 text-white font-bold px-4 py-2 rounded hover:bg-green-600 cursor-pointer m-2'>Pass</button>   
-            <button onClick={()=>setStatus("Failed")} className='bg-red-500 text-white font-bold px-4 py-2 rounded hover:bg-red-600 cursor-pointer m-2'>Fail</button>
-        </div>
+                    setImage(e.target.files[0])
+
+            }}
+        type="file" className="w-64 h-12 border border-gray-300 rounded-lg px-3"/>
+        <button onClick={fileUpload}className="ml-4 w-32 h-12 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600">Upload</button>
       </div>
      )
 }

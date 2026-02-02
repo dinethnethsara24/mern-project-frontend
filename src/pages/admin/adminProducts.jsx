@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { Link } from "react-router-dom"
 
 import axios from "axios"
 
@@ -13,18 +14,19 @@ export function AdminProductsPage(){
             console.log(res.data);
             setProducts(res.data);
         })
-        .catch((err) => {
+        .catch((err) => { 
             console.log(err);
         });
 }, []);
 
 
     return(
-        <div className = "w-full h-full max-h-full overflow-y-scroll">
+        <div className = "w-full h-full max-h-full overflow-y-scroll relative">
+            <Link to="/admin/products/add" className="absolute bottom-4 right-4 w-32 h-12 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600 cursor-pointer flex justify-center items-center">Add Product</Link>
             <table className="w-full border-collapse border border-gray-400">
                 <thead>
                     <tr>
-                        <th>Product ID</th>
+                        <th>Product ID</th> 
                         <th>Product Name</th>
                         <th>Product Image</th>
                         <th>Labelled Price</th>
