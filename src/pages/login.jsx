@@ -2,6 +2,8 @@ import { use, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { isValidEmail } from "../utils/validator";
+
 export default function LoginPage() {
 
     const [email, setEmail] = useState("");
@@ -10,6 +12,12 @@ export default function LoginPage() {
 
 
     async function handleLogin() {
+
+
+        if(!isValidEmail(email)){
+            toast.error("Please enter a valid Email address");
+            return;
+        }
 
         try{
          const response = await axios.post('http://localhost:3000/api/user/login', {

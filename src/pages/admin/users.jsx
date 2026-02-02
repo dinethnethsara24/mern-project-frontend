@@ -22,12 +22,13 @@ export function AdminUsersPage() {
                 <thead>
                     <tr>
                         <th>User ID</th>
+                        <th>Profile Image</th>
                         <th>First Name</th>
                         <th>Last Name</th>
                         <th>Email</th>
                         <th>Role</th>
                         <th>Blocked</th>
-                        <th>Profile Image</th>
+                        
                     </tr>
                 </thead>
 
@@ -36,7 +37,14 @@ export function AdminUsersPage() {
                         users.map((item, index) => {
                             return (
                                 <tr key={index}>
+                                    
                                     <td>{item._id}</td>
+                                    <td>
+                                        <img
+                                            src={item.img}
+                                            className="w-16 h-16 rounded-full object-cover mx-auto"
+                                        />
+                                    </td>                                    
                                     <td>{item.firstName}</td>
                                     <td>{item.lastName}</td>
                                     <td>{item.email}</td>
@@ -46,12 +54,7 @@ export function AdminUsersPage() {
                                     <td className={item.isBlocked ? "text-red-600 font-bold" : "text-green-600 font-bold"}>
                                         {item.isBlocked ? "Blocked" : "Active"}
                                     </td>
-                                    <td>
-                                        <img
-                                            src={item.img}
-                                            className="w-16 h-16 rounded-full object-cover mx-auto"
-                                        />
-                                    </td>
+
                                 </tr>
                             );
                         })

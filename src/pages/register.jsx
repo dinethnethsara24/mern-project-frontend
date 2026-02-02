@@ -2,6 +2,8 @@ import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { isValidEmail } from "../utils/validator";
+
 
 export default function RegisterPage() {
 
@@ -14,10 +16,13 @@ export default function RegisterPage() {
 
     async function handleRegister() {
 
-
         if(!firstName || !lastName || !email || !password){
-
             toast.error("Please fill all the required fields")
+            return;
+        }
+
+        if(!isValidEmail(email)){
+            toast.error("Please enter a valid Email address");
             return;
         }
 

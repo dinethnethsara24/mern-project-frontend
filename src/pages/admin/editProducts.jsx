@@ -1,22 +1,25 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import mediaUpload from "../../utils/mediaUpload";
 import axios from "axios";
 
-export function AddProductsPage(){
+export function EditProductsPage(){
 
-    const [productId, setProductId] = useState("");
-    const [productName, setProductName] = useState("");
-    const [labeledPrice, setLabeledPrice] = useState(0);
-    const [sellingPrice, setSellingPrice] = useState(0);
-    const [stock, setStock] = useState(0);
+    const location = useLocation()
+    const [productId, setProductId] = useState(location.state.productId);
+    const [productName, setProductName] = useState(location.state.productName);
+    const [labeledPrice, setLabeledPrice] = useState(location.state.labeledPrice);
+    const [sellingPrice, setSellingPrice] = useState(location.state.sellingPrice);
+    const [stock, setStock] = useState(location.state.stock);
     // const [isAvailable, setIsAvailable] = useState(true);
     const [imgUrls, setImgUrls] = useState([]);
-    const [altNames, setAltNames] = useState([]);
-    const navigate = useNavigate("")
+    const [altNames, setAltNames] = useState(location.state.altNames.join(","));
+    const navigate = useNavigate()
 
-    async function AddProducts(e){
+    
+
+    async function EditProducts(e){
 
         const token = localStorage.getItem("token")
         if(token == null){
@@ -25,19 +28,20 @@ export function AddProductsPage(){
             return;
         }
 
-        if(imgUrls.length<=0){
-            toast.error("Please upload at least one image");
-            return;
-        }
+        let finalImgUrls = location.state.imgUrls;  
 
         const promisesArray = [];
 
-        for(let i=0;i<imgUrls.length;i++){
-            promisesArray[i] = mediaUpload(imgUrls[i]);
+        // Only upload new images if user selected them
+        if(imgUrls.length > 0){
+            for(let i=0;i<imgUrls.length;i++){
+                promisesArray.push(mediaUpload(imgUrls[i]));
+            }
         }
         try{
-            const imgUrlsUploaded = await Promise.all(promisesArray)
-            console.log(imgUrlsUploaded);
+            if(promisesArray.length > 0){
+                finalImgUrls = await Promise.all(promisesArray);
+            }
 
             const altNamesArray = altNames.split(",")
 
@@ -48,20 +52,21 @@ export function AddProductsPage(){
                 sellingPrice: Number(sellingPrice),
                 stock: Number(stock),
                 // isAvailable: Number(stock),
-                imgUrls: imgUrlsUploaded,
-                altNames: altNamesArray
+                imgUrls: finalImgUrls,
+                altNames: altNamesArray 
             }
 
-            axios.post("http://localhost:3000/api/product/add", product, {
+            axios.put(`http://localhost:3000/api/product/${productId}`, product, {
                 headers: {
                     "Authorization" : `Bearer ${token}`
                 }
             }).then((response) => {
-                toast.success("Product added successfully");
+                toast.success("Product updated successfully");
                 navigate("/admin/products")
 
             }).catch((error) => {
-                toast.error("Failed to add product");
+                console.log("Error response:", error.response);
+                toast.error(error.response?.data?.message || "Failed to update product");
             })
 
 
@@ -75,9 +80,10 @@ export function AddProductsPage(){
     return(
 
         <div className="w-full h-full flex flex-col gap-4 p-4">
-            <h1 className="text-[30px] font-bold">Add Product</h1>
+            <h1 className="text-[30px] font-bold">Edit Product</h1>
            <input 
                 type="text" 
+                disabled
                 placeholder="Product ID"
                 value={productId}
                 className="input input-bordered w-full max-w-x5"
@@ -125,7 +131,7 @@ export function AddProductsPage(){
                 onChange={(e) => setAltNames(e.target.value)} />
 
             <div className="w-full flex justify-center items-center mt-4">
-                <button className="ml-4 text-white font-bold rounded-lg px-4 py-2 bg-green-500 hover:bg-green-600" onClick={AddProducts}>Add Product</button>
+                <button className="ml-4 text-white font-bold rounded-lg px-4 py-2 bg-green-500 hover:bg-green-600 cursor-pointer" onClick={EditProducts}>Edit Product</button>
                 <Link to="/admin/products" className="ml-4 text-white font-bold rounded-lg px-4 py-2 bg-red-500 hover:bg-red-600">Cancel</Link>
             </div>               
         </div>
