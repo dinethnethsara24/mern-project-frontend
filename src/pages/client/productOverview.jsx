@@ -8,6 +8,7 @@ import { addToCart, getCart } from "../../utils/cart"
 
 export default function ProductOverviewPage(){
 
+
 const params = useParams()
 const productId = params.id
 const [status, setStatus] = useState("loading") //loading, Sucess, Error
@@ -117,7 +118,27 @@ return(
             Add to Cart
           </button>
 
-          <button className="flex-1 h-12 border-2 border-[#547792] text-[#547792] rounded-xl font-semibold hover:bg-[#547792] hover:text-white transition-all duration-300">
+          <button 
+
+            onClick={() => {
+                  navigate("/checkout", {
+                    state: {
+                      cart: [
+                        {
+                          productId: product.productId,
+                          productName: product.productName,
+                          imgUrls: [product.imgUrls?.[0]],
+                          sellingPrice: product.sellingPrice,
+                          labeledPrice: product.labeledPrice,
+                          qty: 1,
+                        },
+                      ],
+                    },
+                  });
+                }}
+          
+          
+            className="flex-1 h-12 border-2 border-[#547792] text-[#547792] rounded-xl font-semibold hover:bg-[#547792] hover:text-white transition-all duration-300">
             Buy Now
           </button>
         </div>

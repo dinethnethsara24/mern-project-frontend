@@ -1,11 +1,13 @@
 import { Link, useNavigate } from "react-router-dom";
+import { FaShoppingCart } from "react-icons/fa";
+
 
 export function Header(){
     const navigate = useNavigate();
 
     return(
 
-        <div className="w-full h-[55px] shadow-2xl flex">
+        <header className="w-full h-[70px] shadow-2xl flex">
             <img 
                 onClick={()=>{
                     navigate("/")
@@ -19,6 +21,12 @@ export function Header(){
                 <Link to="/register">Sign up</Link>
             </div>
 
-        </div>
+            <div className="w-[50px] h-full bg-accent flex justify-center items-center">
+                <Link to="/cart" className="text-[20px] font-bold mx-2 hover:scale-110 transition-all">
+                    <FaShoppingCart />
+                </Link>            
+            </div>
+
+        </header>
     )
 }
