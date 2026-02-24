@@ -77,63 +77,150 @@ export function EditProductsPage(){
         }
     }
 
-    return(
+return (
+  <div className="w-full flex justify-center py-10 px-4 flex flex-col">
+        <h1 className="text-2xl font-bold text-secondary w-full">
+          Edit Product
+        </h1>
+    <div className="w-full max-w-6xl bg-white rounded-2xl  relative">
 
-        <div className="w-full h-full flex flex-col gap-4 p-4">
-            <h1 className="text-[30px] font-bold">Edit Product</h1>
-           <input 
-                type="text" 
-                disabled
-                placeholder="Product ID"
-                value={productId}
-                className="input input-bordered w-full max-w-x5"
-                onChange={(e) => setProductId(e.target.value)} />
+      {/* Header */}
+      <div className="flex justify-between items-start mb-10">
 
-            <input 
-                type="text" 
-                placeholder="Product Name"
-                value={productName}
-                className="input input-bordered w-full max-w-x5"
-                onChange={(e) => setProductName(e.target.value)} />
 
-            <input 
-                type="number" 
-                placeholder="Labeled Price"
-                value={labeledPrice}
-                className="input input-bordered w-full max-w-x5"
-                onChange={(e) => setLabeledPrice(e.target.value)} />
 
-            <input 
-                type="number" 
-                placeholder="Selling Price"
-                value={sellingPrice}
-                className="input input-bordered w-full max-w-x5"
-                onChange={(e) => setSellingPrice(e.target.value)} />
-
-            <input 
-                type="number" 
-                placeholder="Stock"
-                value={stock}
-                className="input input-bordered w-full max-w-x5"
-                onChange={(e) => setStock(e.target.value)} />
-
-            <input
-                type="file"
-                placeholder="Images"
-                multiple className="input input-bordered w-full max-w-x5"
-                onChange={(e) => setImgUrls(e.target.files)} />
-
-            <input
-                type="text"
-                placeholder="Alt Names (comma separated)"
-                value={altNames}
-                className="input input-bordered w-full max-w-x5"
-                onChange={(e) => setAltNames(e.target.value)} />
-
-            <div className="w-full flex justify-center items-center mt-4">
-                <button className="ml-4 text-white font-bold rounded-lg px-4 py-2 bg-green-500 hover:bg-green-600 cursor-pointer" onClick={EditProducts}>Edit Product</button>
-                <Link to="/admin/products" className="ml-4 text-white font-bold rounded-lg px-4 py-2 bg-red-500 hover:bg-red-600">Cancel</Link>
-            </div>               
+        {/* Current Image Top Right */}
+        <div className="flex flex-col items-center">
+          <img
+            src={location.state.imgUrls[0]}
+            alt="product"
+            className="w-32 h-32 object-cover rounded-xl shadow-md border"
+          />
         </div>
-    )
+
+      </div>
+
+      {/* 2 Column Form */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+        {/* LEFT COLUMN */}
+        <div className="space-y-6">
+
+          <div>
+            <label className="block text-sm font-semibold text-secondary mb-2">
+              Product ID
+            </label>
+            <input
+              type="text"
+              disabled
+              value={productId}
+              className="w-full px-4 py-3 border rounded-lg bg-gray-100"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-secondary mb-2">
+              Product Name
+            </label>
+            <input
+              type="text"
+              value={productName}
+              onChange={(e) => setProductName(e.target.value)}
+              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-secondary mb-2">
+              Labeled Price
+            </label>
+            <input
+              type="number"
+              value={labeledPrice}
+              onChange={(e) => setLabeledPrice(e.target.value)}
+              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary outline-none"
+            />
+          </div>
+
+        </div>
+
+        {/* RIGHT COLUMN */}
+        <div className="space-y-6">
+
+          <div>
+            <label className="block text-sm font-semibold text-secondary mb-2">
+              Selling Price
+            </label>
+            <input
+              type="number"
+              value={sellingPrice}
+              onChange={(e) => setSellingPrice(e.target.value)}
+              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-secondary mb-2">
+              Stock Quantity
+            </label>
+            <input
+              type="number"
+              value={stock}
+              onChange={(e) => setStock(e.target.value)}
+              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-secondary mb-2">
+              Upload New Images
+            </label>
+            <input
+              type="file"
+              multiple
+              onChange={(e) => setImgUrls(e.target.files)}
+              className="w-full px-4 py-3 border rounded-lg file:bg-accent file:border-0 file:px-4 file:py-2 file:rounded-lg file:cursor-pointer"
+            />
+          </div>
+
+        </div>
+
+      </div>
+
+      {/* Full Width Alt Names */}
+      <div className="mt-8">
+        <label className="block text-sm font-semibold text-secondary mb-2">
+          Alt Names (comma separated)
+        </label>
+        <input
+          type="text"
+          value={altNames}
+          onChange={(e) => setAltNames(e.target.value)}
+          className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary outline-none"
+        />
+      </div>
+
+      {/* Buttons Bottom Row */}
+      <div className="flex justify-end gap-4 mt-12 border-t pt-6">
+
+        <Link
+          to="/admin/products"
+          className="px-8 py-3 rounded-lg bg-gray-200 text-secondary font-semibold hover:bg-gray-300 transition"
+        >
+          Cancel
+        </Link>
+
+        <button
+          onClick={EditProducts}
+          className="px-8 py-3 rounded-lg bg-primary text-white font-semibold hover:opacity-90 transition shadow-md"
+        >
+          Update Product
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+);
 }

@@ -1,124 +1,168 @@
-import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
-import { Link } from "react-router-dom"
-import axios from "axios"
-import { FcEditImage, FcFullTrash } from "react-icons/fc"
-import toast from "react-hot-toast"
+import { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import axios from "axios";
+import { FiEdit } from "react-icons/fi";
+import toast from "react-hot-toast";
+import { FaTrash } from "react-icons/fa6";
 
-export function AdminProductsPage(){
 
-    const [products, setProducts] = useState([])
-    const navigate = useNavigate() 
+export function AdminProductsPage() {
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-
-        if(isLoading == true){
-            axios.get("http://localhost:3000/api/product")
-                .then((res) => {
-                    console.log(res.data);
-                    setProducts(res.data);
-                    setIsLoading(false);
-                })
-                .catch((err) => { 
-                    console.log(err);
-                });                    
-        }
-
-    }, [isLoading]);
-
-    function deleteProduct(productId){
-
-        const token = localStorage.getItem("token")
-
-        if(token == null){
-            toast.error("User Not authorized to access this function")
-            return;
-
-        }
-
-        axios.delete("http://localhost:3000/api/product/"+productId , {
-            headers : {
-                "Authorization" : "Bearer "+token
-            }
-        }).then(() => {
-            toast.success("product deleted successfully")
-            setIsLoading(true)
-            
-        }).catch((e) => {
-            toast.error(e.message.data.message)
+  useEffect(() => {
+    if (isLoading) {
+      axios
+        .get("http://localhost:3000/api/product")
+        .then((res) => {
+          setProducts(res.data);
+          setIsLoading(false);
         })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [isLoading]);
+
+  function deleteProduct(productId) {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      toast.error("User Not authorized");
+      return;
     }
 
+    axios
+      .delete("http://localhost:3000/api/product/" + productId, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      })
+      .then(() => {
+        toast.success("Product deleted successfully");
+        setIsLoading(true);
+      })
+      .catch((e) => {
+        toast.error("Delete failed");
+      });
+  }
 
-    return(
-        <div className = "w-full h-full max-h-full overflow-y-scroll relative">
-            <Link 
-                to="/admin/products/add" 
-                className="absolute bottom-4 right-4 w-32 h-12 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600 cursor-pointer flex justify-center items-center">Add Product
-            </Link>
+  return (
+    <div className="w-full h-full relative">
 
-            {isLoading ?
-                    <div className="w-full h-screen flex justify-center items-center flex-col">
-                        <div className="w-[50px] h-[50px] border-t-[2px] rounded-full animate-spin"/>
-                        <h2 className="font-bold">Loading...</h2>
+      {/* Header Section */}
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-semibold text-gray-700">
+          Product Management
+        </h2>
 
-                    </div> :
+        <Link
+          to="/admin/products/add"
+          className="bg-[#547792] text-white px-5 py-2 rounded-lg shadow hover:bg-[#547792]/80 transition cursor-pointer cursor-text-black-600 font-semibold"
+        >
+          + Add Product
+        </Link>
+      </div>
 
-            <table className="w-full border-collapse border border-gray-400">
-                <thead>
-                    <tr>
-                        <th>Product ID</th> 
-                        <th>Product Image</th>
-                        <th>Product Name</th>                       
-                        <th>Labelled Price</th>
-                        <th>Discounted Price</th>
-                        <th>Stock</th> 
-                        <th>Availability</th>
-                        <th>Actions</th>   
-                    </tr>
-                </thead>
+      {/* Loading State */}
+      {isLoading ? (
+        <div className="flex justify-center items-center h-[60vh] flex-col gap-4">
+          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-gray-500">Loading products...</p>
+        </div>
+      ) : (
 
-                <tbody>
-                    {
-                        products.map(
-                            (item,index) => {
-                                return(
-                                    <tr key={index}>
-                                        <td>{item.productId}</td>
-                                        <td><img src={item.imgUrls[0]} className="w-20 h-20 object-cover mx-auto"/></td>
-                                        <td>{item.productName}</td>                                        
-                                        <td>{item.labeledPrice}</td>
-                                        <td>{item.sellingPrice}</td>
-                                        <td>{item.stock}</td>
-                                        <td>{item.isAvailable ? "Available" : "Not Available"}</td>
-                                        <td>
-                                            <div className="flex justify-center items-center w-full gap-4">
-                                                <FcFullTrash 
-                                                        onClick={() => deleteProduct(item.productId)}
-                                                        className="text-[20px] cursor-pointer transition-transform duration-200 hover:scale-125"/>
-                                                <FcEditImage 
-                                                        onClick={()=>{
-                                                            navigate("/admin/products/edit-products", {
-                                                                state : item
-                                                            })
-                                                        }}
-                                                        className="text-[20px] cursor-pointer transition-transform duration-200 hover:scale-125"/>
-                                            </div>
-                                        </td>
-                                    </tr>
+        /* Table Card */
+        <div className="bg-white rounded-2xl shadow-md overflow-hidden">
 
-                                )
-                            }
-                        )
-                    }
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left text-gray-600">
+              <thead className="bg-gray-100 text-gray-700 uppercase text-xs">
+                <tr>
+                  <th className="px-6 py-4">ID</th>
+                  <th className="px-6 py-4">Image</th>
+                  <th className="px-6 py-4">Name</th>
+                  <th className="px-6 py-4">Label Price</th>
+                  <th className="px-6 py-4">Selling Price</th>
+                  <th className="px-6 py-4">Stock</th>
+                  <th className="px-6 py-4">Status</th>
+                  <th className="px-6 py-4 text-center">Actions</th>
+                </tr>
+              </thead>
 
-                </tbody>
-            </table> 
+              <tbody>
+                {products.map((item, index) => (
+                  <tr
+                    key={index}
+                    className="border-b hover:bg-gray-50 transition"
+                  >
+                    <td className="px-6 py-4 font-medium text-gray-800">
+                      {item.productId}
+                    </td>
 
-            }
+                    <td className="px-6 py-4">
+                      <img
+                        src={item.imgUrls[0]}
+                        alt="product"
+                        className="w-14 h-14 object-cover rounded-lg shadow"
+                      />
+                    </td>
+
+                    <td className="px-6 py-4 font-semibold">
+                      {item.productName}
+                    </td>
+
+                    <td className="px-6 py-4 text-gray-500">
+                      Rs. {item.labeledPrice}
+                    </td>
+
+                    <td className="px-6 py-4 text-secondary-600 font-bold">
+                      Rs. {item.sellingPrice}
+                    </td>
+
+                    <td className="px-6 py-4">
+                      {item.stock}
+                    </td>
+
+                    <td className="px-6 py-4">
+                      <span
+                        className={`px-3 py-1 text-xs rounded-full font-semibold ${
+                          item.isAvailable
+                            ? "bg-green-100 text-green-600"
+                            : "bg-red-100 text-red-600"
+                        }`}
+                      >
+                        {item.isAvailable ? "Available" : "Out of Stock"}
+                      </span>
+                    </td>
+
+                    <td className="px-6 py-4">
+                      <div className="flex justify-center items-center gap-4">
+                        <FaTrash 
+
+                          onClick={() => deleteProduct(item.productId)}
+                          className="text-[22px] cursor-pointer hover:scale-125 transition text-primary"
+                        />
+
+                        <FiEdit 
+                          onClick={() =>
+                            navigate("/admin/products/edit-products", {
+                              state: item,
+                            })
+                          }
+                          className="text-[22px] cursor-pointer hover:scale-125 transition text-primary"
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
         </div>
-    )
+      )}
+    </div>
+  );
 }

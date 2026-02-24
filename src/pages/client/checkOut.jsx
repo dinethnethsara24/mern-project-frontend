@@ -1,9 +1,14 @@
+import axios from "axios"
 import { useState } from "react"
 import { BiMinus, BiPlus, BiTrash, BiShoppingBag } from "react-icons/bi"
 import { Link, useLocation } from "react-router-dom"
 
 export default function CheckoutPage(){
     const location = useLocation()
+
+    const [phoneNumber, setPhoneNumber] = useState("")
+    const [address, setAddress] = useState("")
+
     console.log(location.state.cart)
 
     const [cart,setCart] = useState(location.state?.cart || [])
@@ -33,6 +38,43 @@ export default function CheckoutPage(){
         }
 
     }
+
+    async function placeOrder(){
+        const token = localStorage.getItem("token")
+            if(!token){
+                alert("Please login to place order")
+                return
+            }
+
+            const orderInformation ={
+                products : [],
+                phone : phoneNumber,
+                address : address
+
+            }
+
+            for(let i=0; i<cart.length; i++){
+
+                const item = {
+                    productId : cart[i].productId,
+                    qty : cart[i].qty
+                }
+
+             orderInformation.products.push(item)
+            }
+
+            try{
+                const res = await axios.post("http://localhost:3000/api/order", orderInformation, {
+                    headers : {
+                        Authorization : "Bearer "+token
+                    }})
+                alert("Order placed successfully")
+            }catch(err){
+                alert("Error placing order")
+            }
+    }
+        
+    
 
     if (cart.length === 0) {
         return (
@@ -70,13 +112,31 @@ export default function CheckoutPage(){
                     <p className="text-2xl font-bold text-accent">
                         LKR {getTotal().toFixed(2)}
                     </p>
+
+                                    <input type="text" placeholder="Phone Number"
+                       className="border border-gray-300 rounded-lg px-3 py-2 
+                                focus:outline-none focus:ring-2 focus:ring-accent/50 
+                                focus:border-transparent transition-all duration-300"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)} />
+
+                <input type="text" placeholder="Delivery Address"
+                       className="border border-gray-300 rounded-lg px-3 py-2 
+                                focus:outline-none focus:ring-2 focus:ring-accent/50 
+                                focus:border-transparent transition-all duration-300"
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)} /> 
                 </div>
+
+       
+
                 <button to="/checkout" state={{ cart: cart }} 
                       className="bg-gradient-to-r from-accent to-secondary text-white 
                                px-5 py-2.5 rounded-lg font-bold text-sm
                                hover:from-secondary hover:to-accent 
                                transform hover:scale-105 transition-all duration-300 
-                               shadow-lg whitespace-nowrap">
+                               shadow-lg whitespace-nowrap"
+                      onClick={placeOrder} >
                     place order
                 </button>
             </div>

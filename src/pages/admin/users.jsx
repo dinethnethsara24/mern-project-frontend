@@ -2,65 +2,75 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 export function AdminUsersPage() {
+  const [users, setUsers] = useState([]);
 
-    const [users, setUsers] = useState([]);
+  useEffect(() => {
+    axios
+      .get("http://localhost:3000/api/user")
+      .then((res) => setUsers(res.data))
+      .catch((err) => console.log(err));
+  }, []);
 
-    useEffect(() => {
-        axios.get("http://localhost:3000/api/user")
-            .then((res) => {
-                console.log(res.data);
-                setUsers(res.data);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-    }, []);
+  return (
+    <div className="w-full h-full relative p-6">
+      <h2 className="text-xl font-semibold text-gray-700 mb-6">
+        Users Management
+      </h2>
 
-    return (
-        <div className="w-full h-full max-h-full overflow-y-scroll">
-            <table className="w-full border-collapse border border-gray-400">
-                <thead>
-                    <tr>
-                        <th>User ID</th>
-                        <th>Profile Image</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th>Blocked</th>
-                        
-                    </tr>
-                </thead>
+      <div className="bg-white rounded-2xl shadow-md overflow-x-auto">
+        <table className="w-full text-sm text-left text-gray-600 border-collapse">
+          <thead className="bg-gray-100 text-gray-700 uppercase text-xs">
+            <tr>
+              <th className="px-6 py-3">User ID</th>
+              <th className="px-6 py-3">Profile</th>
+              <th className="px-6 py-3">First Name</th>
+              <th className="px-6 py-3">Last Name</th>
+              <th className="px-6 py-3">Email</th>
+              <th className="px-6 py-3">Role</th>
+              <th className="px-6 py-3 text-center">Status</th>
+            </tr>
+          </thead>
 
-                <tbody>
-                    {
-                        users.map((item, index) => {
-                            return (
-                                <tr key={index}>
-                                    
-                                    <td>{item._id}</td>
-                                    <td>
-                                        <img
-                                            src={item.img}
-                                            className="w-16 h-16 rounded-full object-cover mx-auto"
-                                        />
-                                    </td>                                    
-                                    <td>{item.firstName}</td>
-                                    <td>{item.lastName}</td>
-                                    <td>{item.email}</td>
-                                    <td className="font-semibold">
-                                        {item.role}
-                                    </td>
-                                    <td className={item.isBlocked ? "text-red-600 font-bold" : "text-green-600 font-bold"}>
-                                        {item.isBlocked ? "Blocked" : "Active"}
-                                    </td>
+          <tbody>
+            {users.map((user, index) => (
+              <tr
+                key={index}
+                className="border-b hover:bg-gray-50 transition"
+              >
+                <td className="px-6 py-4 font-medium text-gray-800">
+                  {user._id}
+                </td>
 
-                                </tr>
-                            );
-                        })
-                    }
-                </tbody>
-            </table>
-        </div>
-    );
+                <td className="px-6 py-4">
+                  <img
+                    src={user.img || "/default-profile.png"}
+                    alt="profile"
+                    className="w-12 h-12 rounded-full object-cover mx-auto"
+                  />
+                </td>
+
+                <td className="px-6 py-4">{user.firstName}</td>
+                <td className="px-6 py-4">{user.lastName}</td>
+                <td className="px-6 py-4">{user.email}</td>
+
+                <td className="px-6 py-4 font-semibold">{user.role}</td>
+
+                <td className="px-6 py-4 text-center">
+                  <span
+                    className={`px-3 py-1 text-xs rounded-full font-semibold ${
+                      user.isBlocked
+                        ? "bg-red-100 text-red-600"
+                        : "bg-green-100 text-green-600"
+                    }`}
+                  >
+                    {user.isBlocked ? "Blocked" : "Active"}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
 }

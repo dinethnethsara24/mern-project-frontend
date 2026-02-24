@@ -4,130 +4,158 @@ import { Link, useNavigate } from "react-router-dom";
 import mediaUpload from "../../utils/mediaUpload";
 import axios from "axios";
 
-export function AddProductsPage(){
+export function AddProductsPage() {
+  const [productId, setProductId] = useState("");
+  const [productName, setProductName] = useState("");
+  const [labeledPrice, setLabeledPrice] = useState(0);
+  const [sellingPrice, setSellingPrice] = useState(0);
+  const [stock, setStock] = useState(0);
+  const [imgUrls, setImgUrls] = useState([]);
+  const [altNames, setAltNames] = useState("");
+  const navigate = useNavigate();
 
-    const [productId, setProductId] = useState("");
-    const [productName, setProductName] = useState("");
-    const [labeledPrice, setLabeledPrice] = useState(0);
-    const [sellingPrice, setSellingPrice] = useState(0);
-    const [stock, setStock] = useState(0);
-    // const [isAvailable, setIsAvailable] = useState(true);
-    const [imgUrls, setImgUrls] = useState([]);
-    const [altNames, setAltNames] = useState([]);
-    const navigate = useNavigate("")
-
-    async function AddProducts(e){
-
-        const token = localStorage.getItem("token")
-        if(token == null){
-            toast.error("You are not authorized to perform this action");
-            toast.error("Please login as admin to continue");
-            return;
-        }
-
-        if(imgUrls.length<=0){
-            toast.error("Please upload at least one image");
-            return;
-        }
-
-        const promisesArray = [];
-
-        for(let i=0;i<imgUrls.length;i++){
-            promisesArray[i] = mediaUpload(imgUrls[i]);
-        }
-        try{
-            const imgUrlsUploaded = await Promise.all(promisesArray)
-            console.log(imgUrlsUploaded);
-
-            const altNamesArray = altNames.split(",")
-
-            const product = {
-                productId: productId,
-                productName: productName,
-                labeledPrice: Number(labeledPrice),
-                sellingPrice: Number(sellingPrice),
-                stock: Number(stock),
-                // isAvailable: Number(stock),
-                imgUrls: imgUrlsUploaded,
-                altNames: altNamesArray
-            }
-
-            axios.post("http://localhost:3000/api/product/add", product, {
-                headers: {
-                    "Authorization" : `Bearer ${token}`
-                }
-            }).then((response) => {
-                toast.success("Product added successfully");
-                navigate("/admin/products")
-
-            }).catch((error) => {
-                toast.error("Failed to add product");
-            })
-
-
-
-        } catch(e){
-            toast.error("Image upload failed. Please try again.");
-            return;    
-        }
+  async function AddProducts() {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("You are not authorized to perform this action");
+      return;
     }
 
-    return(
+    if (imgUrls.length <= 0) {
+      toast.error("Please upload at least one image");
+      return;
+    }
 
-        <div className="w-full h-full flex flex-col gap-4 p-4">
-            <h1 className="text-[30px] font-bold">Add Product</h1>
-           <input 
-                type="text" 
-                placeholder="Product ID"
-                value={productId}
-                className="input input-bordered w-full max-w-x5"
-                onChange={(e) => setProductId(e.target.value)} />
+    try {
+      const promisesArray = Array.from(imgUrls).map(file => mediaUpload(file));
+      const imgUrlsUploaded = await Promise.all(promisesArray);
 
-            <input 
-                type="text" 
-                placeholder="Product Name"
-                value={productName}
-                className="input input-bordered w-full max-w-x5"
-                onChange={(e) => setProductName(e.target.value)} />
+      const product = {
+        productId,
+        productName,
+        labeledPrice: Number(labeledPrice),
+        sellingPrice: Number(sellingPrice),
+        stock: Number(stock),
+        imgUrls: imgUrlsUploaded,
+        altNames: altNames.split(","),
+      };
 
-            <input 
-                type="number" 
-                placeholder="Labeled Price"
-                value={labeledPrice}
-                className="input input-bordered w-full max-w-x5"
-                onChange={(e) => setLabeledPrice(e.target.value)} />
+      await axios.post("http://localhost:3000/api/product/add", product, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-            <input 
-                type="number" 
-                placeholder="Selling Price"
-                value={sellingPrice}
-                className="input input-bordered w-full max-w-x5"
-                onChange={(e) => setSellingPrice(e.target.value)} />
+      toast.success("Product added successfully");
+      navigate("/admin/products");
+    } catch (e) {
+      toast.error("Image upload or product creation failed.");
+    }
+  }
 
-            <input 
-                type="number" 
-                placeholder="Stock"
-                value={stock}
-                className="input input-bordered w-full max-w-x5"
-                onChange={(e) => setStock(e.target.value)} />
+  return (
+    <div className="w-full py-10 px-4 flex justify-center">
+      <div className="w-full max-w-5xl bg-white rounded-2xl shadow-lg p-8 flex flex-col gap-8">
 
-            <input
-                type="file"
-                placeholder="Images"
-                multiple className="input input-bordered w-full max-w-x5"
-                onChange={(e) => setImgUrls(e.target.files)} />
+        {/* Header */}
+        <h1 className="text-2xl font-bold text-gray-700">Add Product</h1>
 
-            <input
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="space-y-6">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Product ID</label>
+              <input
                 type="text"
-                placeholder="Alt Names (comma separated)"
-                value={altNames}
-                className="input input-bordered w-full max-w-x5"
-                onChange={(e) => setAltNames(e.target.value)} />
+                value={productId}
+                onChange={(e) => setProductId(e.target.value)}
+                className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary outline-none"
+              />
+            </div>
 
-            <div className="w-full flex justify-center items-center mt-4">
-                <button className="ml-4 text-white font-bold rounded-lg px-4 py-2 bg-green-500 hover:bg-green-600" onClick={AddProducts}>Add Product</button>
-                <Link to="/admin/products" className="ml-4 text-white font-bold rounded-lg px-4 py-2 bg-red-500 hover:bg-red-600">Cancel</Link>
-            </div>               
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Product Name</label>
+              <input
+                type="text"
+                value={productName}
+                onChange={(e) => setProductName(e.target.value)}
+                className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Labeled Price</label>
+              <input
+                type="number"
+                value={labeledPrice}
+                onChange={(e) => setLabeledPrice(e.target.value)}
+                className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary outline-none"
+              />
+            </div>
+          </div>
+
+
+          <div className="space-y-6">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Selling Price</label>
+              <input
+                type="number"
+                value={sellingPrice}
+                onChange={(e) => setSellingPrice(e.target.value)}
+                className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Stock Quantity</label>
+              <input
+                type="number"
+                value={stock}
+                onChange={(e) => setStock(e.target.value)}
+                className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Upload Images</label>
+              <input
+                type="file"
+                multiple
+                onChange={(e) => setImgUrls(e.target.files)}
+                className="w-full px-4 py-3 border rounded-lg file:bg-primary file:text-white file:px-4 file:py-2 file:rounded-lg file:cursor-pointer"
+              />
+            </div>
+          </div>
+
         </div>
-    )
+
+        {/* Alt Names */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">Alt Names (comma separated)</label>
+          <input
+            type="text"
+            value={altNames}
+            onChange={(e) => setAltNames(e.target.value)}
+            className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary outline-none"
+          />
+        </div>
+
+        {/* Buttons */}
+        <div className="flex justify-end gap-4 mt-4 border-t pt-6">
+          <Link
+            to="/admin/products"
+            className="px-8 py-3 rounded-lg bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300 transition"
+          >
+            Cancel
+          </Link>
+
+          <button
+            onClick={AddProducts}
+            className="px-8 py-3 rounded-lg bg-primary text-white font-semibold hover:opacity-90 transition shadow-md"
+          >
+            Add Product
+          </button>
+        </div>
+
+      </div>
+    </div>
+  );
 }
