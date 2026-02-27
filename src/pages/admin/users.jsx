@@ -3,13 +3,22 @@ import axios from "axios";
 
 export function AdminUsersPage() {
   const [users, setUsers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3000/api/user")
-      .then((res) => setUsers(res.data))
-      .catch((err) => console.log(err));
-  }, []);
+    if (isLoading) {
+      axios
+        .get("http://localhost:3000/api/user")
+      .then((res) => {
+        setUsers(res.data);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    }
+  }, [isLoading]);
+
 
   return (
     <div className="w-full h-full relative p-6">
