@@ -7,15 +7,21 @@ export function AdminUsersPage() {
 
   useEffect(() => {
     if (isLoading) {
+      const token = localStorage.getItem("token");
       axios
-        .get("http://localhost:3000/api/user")
-      .then((res) => {
-        setUsers(res.data);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+        .get("http://localhost:3000/api/user/all", {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        .then((res) => {
+          setUsers(res.data);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
     }
   }, [isLoading]);
 
@@ -66,11 +72,10 @@ export function AdminUsersPage() {
 
                 <td className="px-6 py-4 text-center">
                   <span
-                    className={`px-3 py-1 text-xs rounded-full font-semibold ${
-                      user.isBlocked
-                        ? "bg-red-100 text-red-600"
-                        : "bg-green-100 text-green-600"
-                    }`}
+                    className={`px-3 py-1 text-xs rounded-full font-semibold ${user.isBlocked
+                      ? "bg-red-100 text-red-600"
+                      : "bg-green-100 text-green-600"
+                      }`}
                   >
                     {user.isBlocked ? "Blocked" : "Active"}
                   </span>

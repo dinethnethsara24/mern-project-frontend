@@ -1,14 +1,15 @@
 // pages/client/products.jsx
 import { Header } from "../../components/header"
-import { ProductCards } from "../../components/productCards" // Import ProductCards, not SearchProductCard
+import { ProductCards } from "../../components/productCards"
 
 export function ClientProductsPage(){
     return(
-        <div>
+        <div className="w-full min-h-screen bg-gray-50 flex flex-col items-center">
             <Header/>
-            <div className="w-full min-h-[calc(100vh-80px)] bg-gray-50">
-                <ProductCards/> {/* This will now show all products correctly */}
-            </div>
+
+            <main className="w-full max-w-7xl px-6 py-8">
+                <ProductCards/> 
+            </main>
         </div>
     )
 }

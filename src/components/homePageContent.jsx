@@ -3,7 +3,8 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { ProductCards } from "./productCards";
 import Loading from "./loading";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight} from "lucide-react";
+import HeroSection from "./heroSection";
 
 export function HomePageContent() {
 	const [products, setProducts] = useState([]);
@@ -11,10 +12,10 @@ export function HomePageContent() {
 	const [error, setError] = useState(null);
 
 	const categoryConfig = {
-		M: { name: "iPhone", color: "from-blue-500 to-blue-600", icon: "📱" },
-		W: { name: "Apple Watch", color: "from-purple-500 to-purple-600", icon: "⌚" },
-		H: { name: "AirPods", color: "from-pink-500 to-pink-600", icon: "🎧" },
-		P: { name: "Mac", color: "from-gray-600 to-gray-700", icon: "💻" },
+		M: { name: "iPhone"},
+		W: { name: "Apple Watch"},
+		H: { name: "AirPods"},
+		P: { name: "Mac"},
 	};
 
 	useEffect(() => {
@@ -41,7 +42,7 @@ export function HomePageContent() {
 		};
 
 		productsList.forEach((product) => {
-			const prefix = product._id?.charAt(0)?.toUpperCase();
+			const prefix = product.productId?.charAt(0)?.toUpperCase();
 			if (prefix && categorized[prefix]) {
 				categorized[prefix].push(product);
 			}
@@ -65,7 +66,7 @@ export function HomePageContent() {
 
 	if (error) {
 		return (
-			<div className="flex justify-center items-center min-h-screen text-red-500">
+			<div className="flex justify-center items-center min-h-screen text-black-500">
 				<div className="text-center">
 					<h2 className="font-bold text-lg">Error loading products</h2>
 					<p>{error}</p>
@@ -76,23 +77,9 @@ export function HomePageContent() {
 
 	return (
 		<div className="w-full">
-			{/* Hero Banner */}
-			<section className="bg-gradient-to-r from-gray-900 to-gray-800 text-white py-20 px-4">
-				<div className="max-w-7xl mx-auto">
-					<h1 className="text-5xl md:text-6xl font-bold mb-4">
-						Welcome to Apple Store
-					</h1>
-					<p className="text-xl text-gray-300 mb-8 max-w-2xl">
-						Discover the latest Apple products with premium quality and exclusive deals.
-					</p>
-					<Link
-						to="/products"
-						className="inline-block bg-white hover:bg-blue-700 text-gray-900 font-bold py-3 px-8 rounded-lg transition"
-					>
-						Shop Now
-					</Link>
-				</div>
-			</section>
+
+			<HeroSection />
+
 
 			{/* Featured Products */}
 			<section className="py-16 px-4 bg-gray-50">
@@ -110,20 +97,29 @@ export function HomePageContent() {
 						{getFeaturedProducts().map((product) => (
 							<div
 								key={product.productId}
-								className="bg-white rounded-lg shadow-md hover:shadow-lg transition overflow-hidden"
+								className="relative bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-xl transition-shadow duration-300 flex flex-col items-center group"
 							>
-								<Link to={`/overview/${product._id}`}>
-									<img
-										src={product.imgUrls[0]}
-										alt={product.altNames[0]}
-										className="w-full h-48 object-cover hover:scale-105 transition"
-									/>
-									<div className="p-4">
-										<h3 className="font-bold text-lg text-gray-900 line-clamp-1">
+
+								<Link to={`/overview/${product.productId}`} className="w-full flex flex-col items-center">
+									<div className="w-full h-48 md:h-52 mb-6 mt-4 flex items-center justify-center">
+										<img
+											src={product.imgUrls[0]}
+											alt={product.altNames[0]}
+											className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-500 ease-out"
+										/>
+									</div>
+
+									<div className="text-center w-full">
+										<p className="text-[11px] font-medium text-gray-500 uppercase tracking-[0.15em] mb-1.5">
+											Apple
+										</p>
+
+										<h3 className="font-medium text-lg text-gray-900 mb-2 line-clamp-1">
 											{product.productName}
 										</h3>
-										<p className="text-secondary font-bold text-lg mt-2">
-											{product.sellingPrice} LKR
+
+										<p className="text-gray-600 text-sm">
+											From <span className="text-gray-900 font-medium tracking-wide">Rs {product.sellingPrice}</span>
 										</p>
 									</div>
 								</Link>
@@ -139,18 +135,17 @@ export function HomePageContent() {
 				if (categoryProducts.length === 0) return null;
 
 				return (
-					<section key={key} id={key.toLowerCase()} className="py-16 px-4 bg-white border-t">
+					<section key={key} id={key.toLowerCase()} className="py-16 px-4 bg-white">
 						<div className="max-w-7xl mx-auto">
 							<div className="flex justify-between items-center mb-8">
 								<div className="flex items-center gap-3">
-									<span className="text-4xl">{category.icon}</span>
 									<h2 className="text-4xl font-bold text-gray-900">
 										{category.name}
 									</h2>
 								</div>
 								<Link
 									to="/products"
-									className="text-blue-600 hover:text-blue-700 font-semibold flex items-center gap-1"
+									className="text-black hover: font-semibold flex items-center gap-1"
 								>
 									View All <ChevronRight size={20} />
 								</Link>
@@ -160,74 +155,39 @@ export function HomePageContent() {
 								{categoryProducts.slice(0, 4).map((product) => (
 									<div
 										key={product.productId}
-										className="bg-gray-50 rounded-lg shadow-md hover:shadow-lg transition overflow-hidden"
+										className="relative bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-xl transition-shadow duration-300 flex flex-col items-center group"
 									>
-										<Link to={`/overview/${product.productId}`}>
-											<img
-												src={product.imgUrls[0]}
-												alt={product.altNames[0]}
-												className="w-full h-48 object-cover hover:scale-105 transition"
-											/>
-											<div className="p-4">
-												<h3 className="font-bold text-lg text-gray-900 line-clamp-1">
+
+										<Link to={`/overview/${product.productId}`} className="w-full flex flex-col items-center">
+											<div className="w-full h-48 md:h-52 mb-6 mt-4 flex items-center justify-center">
+												<img
+													src={product.imgUrls[0]}
+													alt={product.altNames[0]}
+													className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-500 ease-out"
+												/>
+											</div>
+
+											<div className="text-center w-full">
+												<p className="text-[11px] font-medium text-gray-500 uppercase tracking-[0.15em] mb-1.5">
+													Apple
+												</p>
+
+												<h3 className="font-medium text-lg text-gray-900 mb-2 line-clamp-1">
 													{product.productName}
 												</h3>
-												<p className="text-blue-600 font-bold text-lg mt-2">
-													${product.sellingPrice}
+
+												<p className="text-gray-600 text-sm">
+													From <span className="text-gray-900 font-medium tracking-wide">Rs {product.sellingPrice}</span>
 												</p>
 											</div>
 										</Link>
 									</div>
 								))}
 							</div>
-
-							<div className={`bg-gradient-to-r ${category.color} text-white rounded-lg p-8 flex justify-between items-center`}>
-								<div>
-									<h3 className="text-2xl font-bold mb-2">{category.name}</h3>
-									<p className="text-white text-opacity-90">
-										Explore our complete {category.name.toLowerCase()} collection
-									</p>
-								</div>
-								<Link
-									to="/products"
-									className="bg-white text-gray-900 hover:bg-gray-100 font-bold py-2 px-6 rounded-lg transition"
-								>
-									Shop {category.name}
-								</Link>
-							</div>
 						</div>
 					</section>
 				);
 			})}
-
-			{/* Benefits Section */}
-			<section className="py-16 px-4 bg-gray-50">
-				<div className="max-w-7xl mx-auto">
-					<h2 className="text-4xl font-bold text-center mb-12">Why Choose Us</h2>
-					<div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-						<div className="text-center">
-							<div className="text-5xl mb-4">🚚</div>
-							<h3 className="text-xl font-bold mb-2">Fast Shipping</h3>
-							<p className="text-gray-600">Free shipping on orders over $50</p>
-						</div>
-						<div className="text-center">
-							<div className="text-5xl mb-4">🛡️</div>
-							<h3 className="text-xl font-bold mb-2">Secure Payment</h3>
-							<p className="text-gray-600">Your payment information is safe with us</p>
-						</div>
-						<div className="text-center">
-							<div className="text-5xl mb-4">↩️</div>
-							<h3 className="text-xl font-bold mb-2">Easy Returns</h3>
-							<p className="text-gray-600">30-day money-back guarantee</p>
-						</div>
-						<div className="text-center">
-							<div className="text-5xl mb-4">💬</div>
-							<h3 className="text-xl font-bold mb-2">24/7 Support</h3>
-							<p className="text-gray-600">Dedicated customer support team</p>
-						</div>
-					</div>
-				</div>
-			</section>
 		</div>
 	);
 }

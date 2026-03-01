@@ -1,52 +1,45 @@
 import { Link, useNavigate } from "react-router-dom";
 import { FaSearch, FaShoppingCart } from "react-icons/fa";
 
-
-
 export function Header() {
     const navigate = useNavigate();
 
     return (
-
-        <header className="w-full h-[70px] shadow-2xl flex">
+        <header className="sticky top-0 z-50 w-full h-[70px] bg-gray-900 shadow-md border-b border-white/10 flex items-center px-10 font-poppins">            <div className="flex-1 flex justify-start">
             <img
-                onClick={() => {
-                    navigate("/")
-                }
-                }
-                src="/logo.jpg" alt="Logo" className="w-[50px] h-[50px] object-cover" />
-            <div className="w-[calc(100%-50px)] h-full bg-accent flex justify-center items-center font-bold gap-5 shadow-2xl font-poppins text-gray-700">
-                <Link
-                    to="/"
-                    className="relative text-gray-700 hover:text-black font-medium group"
-                >
+                onClick={() => navigate("/")}
+                src="/logo.jpg"
+                alt="Logo"
+                className="w-[50px] h-[50px] object-cover cursor-pointer hover:opacity-80 transition-opacity"
+            />
+        </div>
+            <nav className="flex items-center gap-8">
+                <Link to="/" className="relative text-white hover: font-medium group transition-colors duration-300">
                     Home
-                    <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-black transition-all duration-300 group-hover:w-full"></span>
+                    <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-white transition-all duration-300 group-hover:w-full"></span>
                 </Link>
-                <Link 
-                to="/products" className="relative text-gray-700 hover:text-black font-medium group">
-                  Product
-                  <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-black transition-all duration-300 group-hover:w-full"></span>
+                <Link to="/products" className="relative text-white hover: font-medium group transition-colors duration-300">
+                    Products
+                    <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-white transition-all duration-300 group-hover:w-full"></span>
                 </Link>
-                <Link to="/login" className="relative text-gray-700 hover:text-black font-medium group">
-                  Login
-                  <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-black transition-all duration-300 group-hover:w-full"></span>
+                <Link to="/login" className="relative text-white hover: font-medium group transition-colors duration-300">
+                    Login
+                    <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-white transition-all duration-300 group-hover:w-full"></span>
                 </Link>
-                <Link to="/register" className="relative text-gray-700 hover:text-black font-medium group">
-                  Sign up
-                  <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-black transition-all duration-300 group-hover:w-full"></span>
+                <Link to="/register" className="relative text-white hover: font-medium group transition-colors duration-300">
+                    Sign up
+                    <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-white transition-all duration-300 group-hover:w-full"></span>
+                </Link>
+            </nav>
+
+            <div className="flex-1 flex justify-end items-center gap-5">
+                <Link to="/search">
+                    <FaSearch className="text-[20px] text-white hover:scale-110 transition-all" />
+                </Link>
+                <Link to="/cart">
+                    <FaShoppingCart className="text-[22px] text-white hover:scale-110 transition-all" />
                 </Link>
             </div>
-
-            <div className="w-[50px] h-full bg-accent flex flex-row justify-center items-center">
-                <Link to="/search" >
-                    <FaSearch className="text-[20px] font-bold  hover:scale-110 transition-all" />
-                </Link>
-                <Link to="/cart" className="text-[20px] font-bold mx-2 hover:scale-110 transition-all">
-                    <FaShoppingCart />
-                </Link>
-            </div>
-
         </header>
-    )
+    );
 }

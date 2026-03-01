@@ -14,7 +14,7 @@ export default function ImageSliderPage(props){
                     images?.map(
                         (image,index)=>{
                             return(
-                                <img key={index} className={"w-[90px] h-[90px] m-2 rounded-2xl object-cover cursor-pointer hover:border-4 hover:border-accent "+(index==currentIndex&&"border-accent border-4")} src={image} onClick={
+                                <img key={index} className={"w-[90px] h-[90px] m-2 rounded-2xl object-cover cursor-pointer hover:border-4 hover:border-gray-400 "+(index==currentIndex&&"border-gray-600 border-4")} src={image} onClick={
                                     ()=>{
                                         setCurrentIndex(index)
                                     }

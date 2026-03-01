@@ -25,8 +25,13 @@ export default function LoginPage() {
                 );
 
                 console.log(res.data);
+                localStorage.setItem("token", res.data.token);
 
-                navigate("/dashboard");
+                if (res.data.role == "admin") {
+                    navigate("/admin")
+                } else {
+                    navigate("/home")
+                }
 
             } catch (error) {
                 console.error("Google login failed", error);

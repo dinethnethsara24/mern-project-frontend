@@ -1,18 +1,18 @@
-// pages/client/searchProduct.jsx
-import { Header } from "../../components/header"
-import { SearchProductCard } from "../../components/searchProductCard"
-import { useState, useEffect } from "react"
-import axios from "axios"
+import { Header } from "../../components/header";
+import { SearchProductCard } from "../../components/searchProductCard";
+import { useState, useEffect, useRef } from "react";
+import { FaSearch } from "react-icons/fa";
+import axios from "axios";
 import Loading from "../../components/loading";
 import toast from "react-hot-toast";
 
 export function SearchProductPage() {
     const [products, setProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [isInitialLoading, setIsInitialLoading] = useState(true); // For initial all products load
+    const [isInitialLoading, setIsInitialLoading] = useState(true);
     const [query, setQuery] = useState("");
+    const timeoutRef = useRef(null); // Ref to store the debounce timeout
 
-    // Fetch all products when component mounts (empty search)
     useEffect(() => {
         fetchAllProducts();
     }, []);
@@ -21,7 +21,6 @@ export function SearchProductPage() {
         setIsInitialLoading(true);
         try {
             const response = await axios.get("http://localhost:3000/api/product");
-            // Filter only available products and remove duplicates
             const availableProducts = response.data.filter(product => product.isAvailable);
             const uniqueProducts = availableProducts.filter((product, index, self) =>
                 index === self.findIndex((p) => p.productId === product.productId)
@@ -29,7 +28,6 @@ export function SearchProductPage() {
             setProducts(uniqueProducts);
         } catch (error) {
             toast.error("Failed to load products");
-            console.error(error);
         } finally {
             setIsInitialLoading(false);
         }
@@ -37,86 +35,69 @@ export function SearchProductPage() {
 
     const searchProducts = async (searchQuery) => {
         if (searchQuery.length === 0) {
-            // If search is empty, fetch all products again
             fetchAllProducts();
             return;
         }
-        
         setIsLoading(true);
         try {
             const response = await axios.get(`http://localhost:3000/api/product/search/${searchQuery}`);
-            // Filter available products and remove duplicates
             const availableProducts = response.data.filter(product => product.isAvailable);
             const uniqueProducts = availableProducts.filter((product, index, self) =>
                 index === self.findIndex((p) => p.productId === product.productId)
             );
             setProducts(uniqueProducts);
         } catch (error) {
-            toast.error("Search failed. Please try again.");
-            console.error(error);
+            toast.error("Search failed");
         } finally {
             setIsLoading(false);
         }
     };
 
-    let timeoutId;
     const handleSearch = (e) => {
         const value = e.target.value;
         setQuery(value);
         
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        
+        timeoutRef.current = setTimeout(() => {
             searchProducts(value);
         }, 500);
     };
 
-    // Show initial loading state
-    if (isInitialLoading) {
-        return (
-            <div className="w-full h-full flex flex-col items-center p-4">
-                {/* <Header/> */}
-                <input
-                    type="text"
-                    placeholder="Search products..."
-                    className="w-full p-2 border border-gray-300 rounded-md mb-4"
-                    value={query}
-                    onChange={handleSearch}
-                />
-                <div className="w-full flex justify-center items-center min-h-[400px]">
-                    <Loading />
-                </div>
-            </div>
-        );
-    }
-
     return (
-        <div className="w-full h-full flex flex-col items-center p-4">
-            {/* <Header/> */}
-            <input
-                type="text"
-                placeholder="Search products..."
-                className="w-full p-2 border border-gray-300 rounded-md mb-4"
-                value={query}
-                onChange={handleSearch}
-            />
-            
-            {/* Show search result count */}
-            {query.length > 0 && (
-                <div className="w-full text-left mb-2 text-gray-600">
-                    Found {products.length} product{products.length !== 1 ? 's' : ''} for "{query}"
-                </div>
-            )}
+        <div className="w-full min-h-screen bg-gray-50 flex flex-col items-center">
+            {/* <Header /> */}
 
-            <div className="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 p-4">
-                {isLoading ? (
-                    <div className="col-span-full flex justify-center items-center min-h-[400px]">
+            <div className="sticky top-[70px] z-40 w-full bg-white/80 backdrop-blur-md border-b border-gray-100 py-6 px-4 shadow-sm animate-in fade-in slide-in-from-top-5 duration-700">
+                <div className="max-w-2xl mx-auto relative group">
+                    <input
+                        type="text"
+                        placeholder="Search for products..."
+                        className="w-full pl-12 pr-4 py-3 bg-gray-100 border-none rounded-2xl focus:ring-2 focus:ring-black/5 transition-all outline-none font-poppins text-gray-700 shadow-inner"
+                        value={query}
+                        onChange={handleSearch}
+                    />
+                    <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-black transition-colors" />
+                </div>
+                
+                {query.length > 0 && !isLoading && (
+                    <div className="max-w-2xl mx-auto mt-2 px-2 text-xs text-gray-400 font-poppins">
+                        Found {products.length} product{products.length !== 1 ? 's' : ''} for "{query}"
+                    </div>
+                )}
+            </div>
+
+            {/* Products Grid */}
+            <div className="w-full max-w-7xl px-6 py-8">
+                {isInitialLoading || isLoading ? (
+                    <div className="flex justify-center items-center min-h-[400px]">
                         <Loading />
                     </div>
                 ) : (
-                    <>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                         {products.length === 0 ? (
-                            <div className="col-span-full text-center p-8">
-                                <h1 className="text-2xl text-secondary font-semibold">
+                            <div className="col-span-full text-center py-20">
+                                <h1 className="text-xl text-gray-400 font-medium font-poppins">
                                     {query.length > 0 
                                         ? `No products found for "${query}"` 
                                         : "No products available"}
@@ -130,7 +111,7 @@ export function SearchProductPage() {
                                 />
                             ))
                         )}
-                    </>
+                    </div>
                 )}
             </div>
         </div>
