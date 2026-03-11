@@ -25,7 +25,8 @@ export function AdminOrdersPage() {
       bottom: "auto",
       marginRight: "-50%",
       transform: "translate(-50%, -50%)",
-      width: "750px",
+      width: "95%",
+      maxWidth: "750px",
       maxHeight: "85vh",
       overflowY: "auto",
       borderRadius: "12px",
@@ -111,7 +112,7 @@ export function AdminOrdersPage() {
   return (
     <div className="w-full h-full relative p-4">
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <h2 className="text-xl font-semibold text-gray-700">
           Orders Management
         </h2>
@@ -126,7 +127,7 @@ export function AdminOrdersPage() {
       ) : (
         <div className="bg-white rounded-2xl shadow-md overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left text-gray-600">
+            <table className="w-full text-sm text-left text-gray-600 whitespace-nowrap">
               <thead className="bg-gray-100 text-gray-700 uppercase text-xs">
                 <tr>
                   <th className="px-6 py-4">Order ID</th>
@@ -210,7 +211,7 @@ export function AdminOrdersPage() {
                     Order {selectedOrder.orderId}
                   </h2>
                   {/* Order Info */}
-                  <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                     <div>
                       <p><strong>Name:</strong> {selectedOrder.name}</p>
                       <p><strong>Email:</strong> {selectedOrder.email}</p>
@@ -238,7 +239,7 @@ export function AdminOrdersPage() {
                   {/* Products Table */}
                   <div className="bg-white rounded-2xl shadow-md overflow-hidden">
                     <div className="overflow-x-auto">
-                      <table className="w-full text-sm text-left text-gray-600">
+                      <table className="w-full text-sm text-left text-gray-600 whitespace-nowrap">
                         <thead className="bg-gray-100 text-gray-700 uppercase text-xs">
                           <tr>
                             <th className="px-4 py-3">Image</th>

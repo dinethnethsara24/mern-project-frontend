@@ -53,7 +53,7 @@ export function AdminProductsPage() {
     <div className="w-full h-full relative">
 
       {/* Header Section */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <h2 className="text-xl font-semibold text-gray-700">
           Product Management
         </h2>
@@ -78,7 +78,7 @@ export function AdminProductsPage() {
         <div className="bg-white rounded-2xl shadow-md overflow-hidden">
 
           <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left text-gray-600">
+            <table className="w-full text-sm text-left text-gray-600 whitespace-nowrap">
               <thead className="bg-gray-100 text-gray-700 uppercase text-xs">
                 <tr>
                   <th className="px-6 py-4">ID</th>

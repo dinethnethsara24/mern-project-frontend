@@ -34,7 +34,7 @@ export function AdminUsersPage() {
       </h2>
 
       <div className="bg-white rounded-2xl shadow-md overflow-x-auto">
-        <table className="w-full text-sm text-left text-gray-600 border-collapse">
+        <table className="w-full text-sm text-left text-gray-600 border-collapse whitespace-nowrap">
           <thead className="bg-gray-100 text-gray-700 uppercase text-xs">
             <tr>
               <th className="px-6 py-3">User ID</th>

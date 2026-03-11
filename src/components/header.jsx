@@ -136,12 +136,29 @@ export function Header() {
                     >
                         Home
                     </Link>
+
+                    <Link
+                        to="/products"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="text-white text-lg font-medium hover:text-gray-300 transition-colors"
+                    >
+                        Products
+                    </Link>
+
                     <Link
                         to="/contact"
                         onClick={() => setMobileMenuOpen(false)}
                         className="text-white text-lg font-medium hover:text-gray-300 transition-colors"
                     >
                         Contact Us
+                    </Link>
+
+                    <Link
+                        to="/about"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="text-white text-lg font-medium hover:text-gray-300 transition-colors"
+                    >
+                        About Us
                     </Link>
 
                     <div className="h-px bg-white/20 my-4"></div>
